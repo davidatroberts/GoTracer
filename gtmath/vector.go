@@ -56,6 +56,30 @@ func (v *Vector) Div(i interface{}) Vector {
 	return *v
 }
 
+// Add returns v+s
+func (v *Vector) Add(i interface{}) Vector {
+	switch value := i.(type) {
+	case Vector:
+		return AddVec(*v, value)
+	case float64:
+		return Vector{v.X + value, v.Y + value, v.Z + value}
+	}
+
+	return *v
+}
+
+// Sub returns v-s
+func (v *Vector) Sub(i interface{}) Vector {
+	switch value := i.(type) {
+	case Vector:
+		return SubVec(*v, value)
+	case float64:
+		return Vector{v.X - value, v.Y - value, v.Z - value}
+	}
+
+	return *v
+}
+
 // Normalize returns normalized vector
 func (v *Vector) Normalize() Vector {
 	mag := v.Magnitude()
@@ -69,17 +93,17 @@ func (v *Vector) UnitDirection() Vector {
 }
 
 // AddVec returns a+b
-func AddVec(a, b *Vector) Vector {
+func AddVec(a, b Vector) Vector {
 	return Vector{a.X + b.X, a.Y + b.Y, a.Z + b.Z}
 }
 
 // SubVec returns a-b
-func SubVec(a, b *Vector) Vector {
+func SubVec(a, b Vector) Vector {
 	return Vector{a.X - b.X, a.Y - b.Y, a.Z - b.Z}
 }
 
 // Dot returns dot product
-func Dot(a, b *Vector) float64 {
+func Dot(a, b Vector) float64 {
 	return a.X*b.X + a.Y*b.Y + a.Z*b.Z
 }
 
