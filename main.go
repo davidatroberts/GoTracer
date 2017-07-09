@@ -2,43 +2,29 @@ package main
 
 import (
 	"GoTracer/gtmath"
+	"GoTracer/hitable"
 	"GoTracer/output"
 	"flag"
 	"math"
 )
 
-func hitSphere(centre gtmath.Vector, radius float64, ray gtmath.Ray) float64 {
-	oc := ray.Origin.Sub(centre)
-	a := gtmath.Dot(ray.Direction, ray.Direction)
-	b := 2.0 * gtmath.Dot(oc, ray.Direction)
-	c := gtmath.Dot(oc, oc) - radius*radius
-	discriminant := b*b - 4*a*c
-	if discriminant < 0 {
-		return -1.0
+func colour(ray *gtmath.Ray, world *hitable.List) gtmath.Vector {
+	var rec hitable.HitRecord
+	if world.Hit(*ray, 0.0, math.MaxFloat64, &rec) {
+		vec3 := gtmath.Vector{rec.Normal.X + 1, rec.Normal.Y + 1, rec.Normal.Z + 1}
+		v := vec3.Mult(0.5)
+		return v
 	}
 
-	return (-b - math.Sqrt(discriminant)) / (2.0 * a)
-}
-
-func colour(r gtmath.Ray) gtmath.Vector {
-	t := hitSphere(gtmath.Vector{0.0, 0.0, -1.0}, 0.5, r)
-	if t > 0.0 {
-		rpo := r.PointAtOrigin(t)
-		rpoV := rpo.Sub(gtmath.Vector{0.0, 0.0, -1.0})
-		n := rpoV.UnitDirection()
-		r := gtmath.Vector{n.X + 1, n.Y + 1, n.Z + 1}
-		return r.UnitDirection()
-	}
-
-	unitDir := r.Direction.UnitDirection()
-	t = 0.5 * (unitDir.Y + 1.0)
+	unitDir := ray.Direction.UnitDirection()
+	t := 0.5 * (unitDir.Y + 1.0)
 
 	a := gtmath.Vector{1.0, 1.0, 1.0}
-	a = a.Mult(1.0 - t)
 	b := gtmath.Vector{0.5, 0.7, 1.0}
-	b = b.Mult(t)
+	aa := a.Mult(1.0 - t)
+	bb := b.Mult(t)
+	return aa.Add(bb)
 
-	return a.Add(b)
 }
 
 func main() {
@@ -56,19 +42,30 @@ func main() {
 	vertical := gtmath.Vector{0.0, 2.0, 0.0}
 	origin := gtmath.Vector{0.0, 0.0, 0.0}
 
+	s1 := hitable.Sphere{
+		gtmath.Vector{0.0, 0.0, -1.0},
+		0.5,
+	}
+	s2 := hitable.Sphere{
+		gtmath.Vector{0.0, -100.5, -1.0},
+		100,
+	}
+	var hitList hitable.List
+	hitList.List = append(hitList.List, &s1, &s2)
+
 	// render
-	for y := 0; y < int(*hp); y++ {
-		for x := 0; x < int(*wp); x++ {
-			u := float64(x) / float64(*wp)
-			v := float64(y) / float64(*hp)
+	for j := 0; j < int(*hp); j++ {
+		for i := 0; i < int(*wp); i++ {
+			u := float64(i) / float64(*wp)
+			v := float64(j) / float64(*hp)
 
 			newLLCorner := lowerLeftCorner.Add(
 				gtmath.AddVec(horizontal.Mult(u), vertical.Mult(v)))
 
 			r := gtmath.Ray{origin, newLLCorner}
-			col := colour(r)
+			col := colour(&r, &hitList)
 
-			img.Put(uint(x), uint(y), col)
+			img.Put(uint(i), uint(j), col)
 		}
 	}
 

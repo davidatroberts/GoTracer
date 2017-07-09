@@ -36,7 +36,7 @@ func NewImageOutputter(width, height uint, path string) *ImageOutputter {
 		width,
 		height,
 		path,
-		image.NewRGBA(image.Rect(0, 0, int(width-1), int(height-1)))}
+		image.NewRGBA(image.Rect(0, 0, int(width), int(height)))}
 }
 
 // Put puts colour at pos x,y into image

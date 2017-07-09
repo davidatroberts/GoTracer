@@ -5,6 +5,8 @@ import (
 	"math"
 )
 
+const epsilon = 0.000001
+
 // Vector a 3D vector
 type Vector struct {
 	X, Y, Z float64
@@ -39,6 +41,8 @@ func (v *Vector) Mult(i interface{}) Vector {
 		return Vector{v.X * value.X, v.Y * value.Y, v.Z * value.Z}
 	case float64:
 		return Vector{v.X * value, v.Y * value, v.Z * value}
+	case int:
+		return Vector{v.X * float64(value), v.Y * float64(value), v.Z * float64(value)}
 	}
 
 	return *v
@@ -51,6 +55,8 @@ func (v *Vector) Div(i interface{}) Vector {
 		return Vector{v.X / value.X, v.Y / value.Y, v.Z / value.Z}
 	case float64:
 		return Vector{v.X / value, v.Y / value, v.Z / value}
+	case int:
+		return Vector{v.X / float64(value), v.Y / float64(value), v.Z / float64(value)}
 	}
 
 	return *v
@@ -83,7 +89,7 @@ func (v *Vector) Sub(i interface{}) Vector {
 // Normalize returns normalized vector
 func (v *Vector) Normalize() Vector {
 	mag := v.Magnitude()
-	return v.Mult(mag)
+	return v.Mult(1 / mag)
 }
 
 // UnitDirection returns unit direction of vector
@@ -113,4 +119,18 @@ func CrossProduct(a, b *Vector) Vector {
 	yy := a.Z*b.X - a.X*b.Z
 	zz := a.X*b.Y - a.Y*b.X
 	return Vector{xx, yy, zz}
+}
+
+// Approx returns true if a-b < epsilon
+func Approx(a, b Vector) bool {
+	diff := a.Sub(b)
+	diff.X = math.Abs(diff.X)
+	diff.Y = math.Abs(diff.Y)
+	diff.Z = math.Abs(diff.Z)
+
+	if diff.X < epsilon && diff.Y < epsilon && diff.Z < epsilon {
+		return true
+	}
+
+	return false
 }
