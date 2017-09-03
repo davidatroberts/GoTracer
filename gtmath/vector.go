@@ -52,11 +52,23 @@ func (v *Vector) Mult(i interface{}) Vector {
 func (v *Vector) Div(i interface{}) Vector {
 	switch value := i.(type) {
 	case Vector:
-		return Vector{v.X / value.X, v.Y / value.Y, v.Z / value.Z}
+		return Vector{
+			X: v.X / value.X,
+			Y: v.Y / value.Y,
+			Z: v.Z / value.Z,
+		}
 	case float64:
-		return Vector{v.X / value, v.Y / value, v.Z / value}
+		return Vector{
+			X: v.X / value,
+			Y: v.Y / value,
+			Z: v.Z / value,
+		}
 	case int:
-		return Vector{v.X / float64(value), v.Y / float64(value), v.Z / float64(value)}
+		return Vector{
+			X: v.X / float64(value),
+			Y: v.Y / float64(value),
+			Z: v.Z / float64(value),
+		}
 	}
 
 	return *v
@@ -68,7 +80,11 @@ func (v *Vector) Add(i interface{}) Vector {
 	case Vector:
 		return AddVec(*v, value)
 	case float64:
-		return Vector{v.X + value, v.Y + value, v.Z + value}
+		return Vector{
+			X: v.X + value,
+			Y: v.Y + value,
+			Z: v.Z + value,
+		}
 	}
 
 	return *v
@@ -80,7 +96,11 @@ func (v *Vector) Sub(i interface{}) Vector {
 	case Vector:
 		return SubVec(*v, value)
 	case float64:
-		return Vector{v.X - value, v.Y - value, v.Z - value}
+		return Vector{
+			X: v.X - value,
+			Y: v.Y - value,
+			Z: v.Z - value,
+		}
 	}
 
 	return *v
@@ -100,12 +120,20 @@ func (v *Vector) UnitDirection() Vector {
 
 // AddVec returns a+b
 func AddVec(a, b Vector) Vector {
-	return Vector{a.X + b.X, a.Y + b.Y, a.Z + b.Z}
+	return Vector{
+		X: a.X + b.X,
+		Y: a.Y + b.Y,
+		Z: a.Z + b.Z,
+	}
 }
 
 // SubVec returns a-b
 func SubVec(a, b Vector) Vector {
-	return Vector{a.X - b.X, a.Y - b.Y, a.Z - b.Z}
+	return Vector{
+		X: a.X - b.X,
+		Y: a.Y - b.Y,
+		Z: a.Z - b.Z,
+	}
 }
 
 // Dot returns dot product
@@ -118,7 +146,11 @@ func CrossProduct(a, b *Vector) Vector {
 	xx := a.Y*b.Z - a.Z*b.Y
 	yy := a.Z*b.X - a.X*b.Z
 	zz := a.X*b.Y - a.Y*b.X
-	return Vector{xx, yy, zz}
+	return Vector{
+		X: xx,
+		Y: yy,
+		Z: zz,
+	}
 }
 
 // Approx returns true if a-b < epsilon

@@ -43,7 +43,7 @@ func NewImageOutputter(width, height uint, path string) *ImageOutputter {
 func (outp *ImageOutputter) Put(x, y uint, colour gtmath.Vector) {
 	if x < outp.width && y < outp.height {
 		col := vectorToRGBA(colour)
-		outp.img.Set(int(x), int(y), col)
+		outp.img.Set(int(x), int(outp.height)-int(y), col)
 	}
 }
 
