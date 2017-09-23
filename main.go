@@ -12,9 +12,9 @@ func colour(ray *gtmath.Ray, world *hitable.List) gtmath.Vector {
 	var rec hitable.HitRecord
 	if world.Hit(*ray, 0.0, math.MaxFloat64, &rec) {
 		vec3 := gtmath.Vector{
-			X: rec.Normal.X + 1,
-			Y: rec.Normal.Y + 1,
-			Z: rec.Normal.Z + 1,
+			X: rec.Normal.X + 1.0,
+			Y: rec.Normal.Y + 1.0,
+			Z: rec.Normal.Z + 1.0,
 		}
 		v := vec3.Mult(0.5)
 		return v

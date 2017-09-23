@@ -38,11 +38,23 @@ func (v *Vector) SquaredLength() float64 {
 func (v *Vector) Mult(i interface{}) Vector {
 	switch value := i.(type) {
 	case Vector:
-		return Vector{v.X * value.X, v.Y * value.Y, v.Z * value.Z}
+		return Vector{
+			X: v.X * value.X,
+			Y: v.Y * value.Y,
+			Z: v.Z * value.Z,
+		}
 	case float64:
-		return Vector{v.X * value, v.Y * value, v.Z * value}
+		return Vector{
+			X: v.X * value,
+			Y: v.Y * value,
+			Z: v.Z * value,
+		}
 	case int:
-		return Vector{v.X * float64(value), v.Y * float64(value), v.Z * float64(value)}
+		return Vector{
+			X: v.X * float64(value),
+			Y: v.Y * float64(value),
+			Z: v.Z * float64(value),
+		}
 	}
 
 	return *v
