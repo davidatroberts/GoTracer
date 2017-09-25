@@ -35,7 +35,7 @@ func (v *Vector) SquaredLength() float64 {
 }
 
 // Mult returns v*s
-func (v *Vector) Mult(i interface{}) Vector {
+func (v Vector) Mult(i interface{}) Vector {
 	switch value := i.(type) {
 	case Vector:
 		return Vector{
@@ -57,11 +57,11 @@ func (v *Vector) Mult(i interface{}) Vector {
 		}
 	}
 
-	return *v
+	return v
 }
 
 // Div returns v/s
-func (v *Vector) Div(i interface{}) Vector {
+func (v Vector) Div(i interface{}) Vector {
 	switch value := i.(type) {
 	case Vector:
 		return Vector{
@@ -83,7 +83,7 @@ func (v *Vector) Div(i interface{}) Vector {
 		}
 	}
 
-	return *v
+	return v
 }
 
 // Add returns v+s
@@ -119,7 +119,7 @@ func (v *Vector) Sub(i interface{}) Vector {
 }
 
 // Normalize returns normalized vector
-func (v *Vector) Normalize() Vector {
+func (v Vector) Normalize() Vector {
 	mag := v.Magnitude()
 	return v.Mult(1 / mag)
 }
