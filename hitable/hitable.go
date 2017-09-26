@@ -2,7 +2,6 @@ package hitable
 
 import (
 	"GoTracer/gtmath"
-	"fmt"
 )
 
 // HitRecord stores record of a hit
@@ -24,16 +23,17 @@ type List struct {
 // Hit iterates through list and passes through
 func (l *List) Hit(ray gtmath.Ray, tMin, tMax float64, rec *HitRecord) bool {
 	// var tmpRecord HitRecord
-	tmpRecord := &HitRecord{}
 	hitAnything := false
 	closestSoFar := tMax
 	for _, h := range l.List {
+		tmpRecord := &HitRecord{}
 		if h.Hit(ray, tMin, closestSoFar, tmpRecord) {
 			hitAnything = true
 			closestSoFar = tmpRecord.t
-			rec = tmpRecord
-			fmt.Printf("%v\n", rec.Normal)
 
+			rec.Normal = tmpRecord.Normal
+			rec.P = tmpRecord.P
+			rec.t = tmpRecord.t
 		}
 	}
 

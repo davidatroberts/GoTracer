@@ -26,7 +26,6 @@ func (s *Sphere) Hit(ray gtmath.Ray, tMin, tMax float64, rec *HitRecord) bool {
 			rec.P = ray.PointAtP(rec.t)
 			rec.Normal = gtmath.SubVec(rec.P, s.Centre).Div(s.Radius).Normalize()
 
-			// fmt.Printf("%v\n", rec.Normal.Normalize())
 			return true
 		}
 		tmp = (-b + math.Sqrt(b*b-a*c)) / a
@@ -35,7 +34,6 @@ func (s *Sphere) Hit(ray gtmath.Ray, tMin, tMax float64, rec *HitRecord) bool {
 			rec.P = ray.PointAtP(rec.t)
 			rec.Normal = gtmath.SubVec(rec.P, s.Centre).Div(s.Radius).Normalize()
 
-			// fmt.Printf("%v\n", rec.Normal.Normalize())
 			return true
 		}
 	}

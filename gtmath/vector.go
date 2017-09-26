@@ -26,7 +26,7 @@ func (v *Vector) String() string {
 
 // Magnitude returns the magnitude of the vector
 func (v *Vector) Magnitude() float64 {
-	return v.pNorm(2)
+	return v.pNorm(2.0)
 }
 
 // SquaredLength returns squared length
@@ -120,8 +120,8 @@ func (v *Vector) Sub(i interface{}) Vector {
 
 // Normalize returns normalized vector
 func (v Vector) Normalize() Vector {
-	mag := v.Magnitude()
-	return v.Mult(1 / mag)
+	mag := math.Abs(v.Magnitude())
+	return v.Div(mag)
 }
 
 // UnitDirection returns unit direction of vector

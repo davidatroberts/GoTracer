@@ -11,13 +11,7 @@ import (
 func colour(ray *gtmath.Ray, world *hitable.List) gtmath.Vector {
 	rec := &hitable.HitRecord{}
 	if world.Hit(*ray, 0.001, math.MaxFloat64, rec) {
-		vec3 := gtmath.Vector{
-			X: rec.Normal.X + 1.0,
-			Y: rec.Normal.Y + 1.0,
-			Z: rec.Normal.Z + 1.0,
-		}
-		v := vec3.Mult(0.5)
-		return v
+		return rec.Normal.Add(1.0).Mult(0.5)
 	}
 
 	unitDir := ray.Direction.UnitDirection()
@@ -68,8 +62,6 @@ func main() {
 
 			r := gtmath.Ray{Origin: origin, Direction: newLLCorner}
 			col := colour(&r, &hitList)
-
-			// fmt.Printf("x: %d, y: %d, col: %v\n", i, j, col)
 
 			img.Put(uint(i), uint(j), col)
 		}
