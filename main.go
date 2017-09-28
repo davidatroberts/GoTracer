@@ -4,6 +4,7 @@ import (
 	"GoTracer/gtmath"
 	"GoTracer/hitable"
 	"GoTracer/output"
+	"GoTracer/view"
 	"flag"
 	"math"
 )
@@ -34,12 +35,7 @@ func main() {
 
 	img := output.NewImageOutputter(*wp, *hp, *filePath)
 
-	// generate position vector
-	lowerLeftCorner := gtmath.Vector{X: -2.0, Y: -1.0, Z: -1.0}
-	horizontal := gtmath.Vector{X: 4.0, Y: 0.0, Z: 0.0}
-	vertical := gtmath.Vector{X: 0.0, Y: 2.0, Z: 0.0}
-	origin := gtmath.Vector{X: 0.0, Y: 0.0, Z: 0.0}
-
+	// create the world objects
 	s1 := hitable.Sphere{
 		Centre: gtmath.Vector{X: 0.0, Y: 0.0, Z: -1.0},
 		Radius: 0.5,
@@ -51,16 +47,21 @@ func main() {
 	var hitList hitable.List
 	hitList.List = append(hitList.List, &s1, &s2)
 
+	// create the camera
+	camera := view.Camera{
+		Origin:          gtmath.Vector{X: 0.0, Y: 0.0, Z: 0.0},
+		LowerLeftCorner: gtmath.Vector{X: -2.0, Y: -1.0, Z: -1.0},
+		Horizontal:      gtmath.Vector{X: 4.0, Y: 0.0, Z: 0.0},
+		Vertical:        gtmath.Vector{X: 0.0, Y: 2.0, Z: 0.0},
+	}
+
 	// render
 	for j := 0; j < int(*hp); j++ {
 		for i := 0; i < int(*wp); i++ {
 			u := float64(i) / float64(*wp)
 			v := float64(j) / float64(*hp)
 
-			newLLCorner := lowerLeftCorner.Add(
-				gtmath.AddVec(horizontal.Mult(u), vertical.Mult(v)))
-
-			r := gtmath.Ray{Origin: origin, Direction: newLLCorner}
+			r := camera.GetRay(u, v)
 			col := colour(&r, &hitList)
 
 			img.Put(uint(i), uint(j), col)

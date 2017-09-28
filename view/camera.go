@@ -18,6 +18,11 @@ func NewCamera(origin, lowerLeftCorner, horizontal,
 	}
 }
 
+// GetRay gets ray at u,v
 func (c Camera) GetRay(u, v float64) gtmath.Ray {
-
+	return gtmath.Ray{
+		Origin: c.Origin,
+		Direction: c.LowerLeftCorner.Add(
+			gtmath.AddVec(c.Horizontal.Mult(u), c.Vertical.Mult(v))),
+	}
 }
