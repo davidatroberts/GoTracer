@@ -7,6 +7,7 @@ import (
 	"GoTracer/view"
 	"flag"
 	"math"
+	"math/rand"
 )
 
 func colour(ray *gtmath.Ray, world *hitable.List) gtmath.Vector {
@@ -30,6 +31,7 @@ func main() {
 	// read in the cmd line args
 	wp := flag.Uint("width", 400, "width of the image")
 	hp := flag.Uint("height", 200, "height of the image")
+	ns := flag.Uint("samples", 100, "Number of subsamples to take")
 	filePath := flag.String("file", "image.png", "output file path")
 	flag.Parse()
 
@@ -58,12 +60,16 @@ func main() {
 	// render
 	for j := 0; j < int(*hp); j++ {
 		for i := 0; i < int(*wp); i++ {
-			u := float64(i) / float64(*wp)
-			v := float64(j) / float64(*hp)
+			col := gtmath.Vector{X: 0, Y: 0, Z: 0}
+			for s := 0; s < int(*ns); s++ {
+				u := (float64(i) + rand.Float64()) / float64(*wp)
+				v := (float64(j) + rand.Float64()) / float64(*hp)
 
-			r := camera.GetRay(u, v)
-			col := colour(&r, &hitList)
+				r := camera.GetRay(u, v)
+				col = gtmath.AddVec(col, colour(&r, &hitList))
+			}
 
+			col = col.Div(int(*ns))
 			img.Put(uint(i), uint(j), col)
 		}
 	}
