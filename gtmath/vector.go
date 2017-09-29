@@ -3,9 +3,10 @@ package gtmath
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
-const epsilon = 0.000001
+const Epsilon = 0.000001
 
 // Vector a 3D vector
 type Vector struct {
@@ -165,16 +166,36 @@ func CrossProduct(a, b *Vector) Vector {
 	}
 }
 
-// Approx returns true if a-b < epsilon
+// Approx returns true if a-b < Epsilon
 func Approx(a, b Vector) bool {
 	diff := a.Sub(b)
 	diff.X = math.Abs(diff.X)
 	diff.Y = math.Abs(diff.Y)
 	diff.Z = math.Abs(diff.Z)
 
-	if diff.X < epsilon && diff.Y < epsilon && diff.Z < epsilon {
+	if diff.X < Epsilon && diff.Y < Epsilon && diff.Z < Epsilon {
 		return true
 	}
 
 	return false
+}
+
+// RandomVecInUnitSphere returns a random vector in a unit sphere
+func RandomVecInUnitSphere() Vector {
+	var p Vector
+	for {
+		p = SubVec(
+			Vector{
+				rand.Float64(),
+				rand.Float64(),
+				rand.Float64(),
+			}.Mult(2.0),
+			Vector{1, 1, 1})
+
+		if p.SquaredLength() >= 1.0 {
+			break
+		}
+	}
+
+	return p
 }

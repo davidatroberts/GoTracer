@@ -12,8 +12,15 @@ import (
 
 func colour(ray *gtmath.Ray, world *hitable.List) gtmath.Vector {
 	rec := &hitable.HitRecord{}
-	if world.Hit(*ray, 0.001, math.MaxFloat64, rec) {
-		return rec.Normal.Add(1.0).Mult(0.5)
+	if world.Hit(*ray, gtmath.Epsilon, math.MaxFloat64, rec) {
+		target := rec.P.Add(rec.Normal.Add(gtmath.RandomVecInUnitSphere()))
+
+		return colour(
+			&gtmath.Ray{
+				Origin:    rec.P,
+				Direction: gtmath.SubVec(target, rec.P),
+			},
+			world).Mult(0.5)
 	}
 
 	unitDir := ray.Direction.UnitDirection()
@@ -70,6 +77,14 @@ func main() {
 			}
 
 			col = col.Div(int(*ns))
+
+			// gamma correct
+			col = gtmath.Vector{
+				X: math.Sqrt(col.X),
+				Y: math.Sqrt(col.Y),
+				Z: math.Sqrt(col.Z),
+			}
+
 			img.Put(uint(i), uint(j), col)
 		}
 	}
