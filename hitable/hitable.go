@@ -4,10 +4,16 @@ import (
 	"GoTracer/gtmath"
 )
 
+// Material interface type for materials
+type Material interface {
+	Scatter(rayIn gtmath.Ray, hitRecord HitRecord) (success bool, attenuation gtmath.Vector, scattered gtmath.Ray)
+}
+
 // HitRecord stores record of a hit
 type HitRecord struct {
 	t         float64
 	P, Normal gtmath.Vector
+	Material  Material
 }
 
 // Hitable interface for things that can be hit
