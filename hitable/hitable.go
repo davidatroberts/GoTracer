@@ -40,6 +40,7 @@ func (l *List) Hit(ray gtmath.Ray, tMin, tMax float64, rec *HitRecord) bool {
 			rec.Normal = tmpRecord.Normal
 			rec.P = tmpRecord.P
 			rec.t = tmpRecord.t
+			rec.Material = tmpRecord.Material
 		}
 	}
 

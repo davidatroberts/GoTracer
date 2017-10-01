@@ -4,23 +4,23 @@ import (
 	"GoTracer/gtmath"
 	"GoTracer/hitable"
 	"GoTracer/output"
+	"GoTracer/property"
 	"GoTracer/view"
 	"flag"
 	"math"
 	"math/rand"
 )
 
-func colour(ray *gtmath.Ray, world *hitable.List) gtmath.Vector {
+func colour(ray *gtmath.Ray, world *hitable.List, depth int) gtmath.Vector {
 	rec := &hitable.HitRecord{}
 	if world.Hit(*ray, gtmath.Epsilon, math.MaxFloat64, rec) {
-		target := rec.P.Add(rec.Normal.Add(gtmath.RandomVecInUnitSphere()))
+		success, attenuation, scattered := rec.Material.Scatter(*ray, *rec)
 
-		return colour(
-			&gtmath.Ray{
-				Origin:    rec.P,
-				Direction: gtmath.SubVec(target, rec.P),
-			},
-			world).Mult(0.5)
+		if depth < 50 && success {
+			return attenuation.Mult(colour(&scattered, world, depth+1))
+		}
+
+		return gtmath.Vector{X: 0, Y: 0, Z: 0}
 	}
 
 	unitDir := ray.Direction.UnitDirection()
@@ -46,15 +46,28 @@ func main() {
 
 	// create the world objects
 	s1 := hitable.Sphere{
-		Centre: gtmath.Vector{X: 0.0, Y: 0.0, Z: -1.0},
-		Radius: 0.5,
+		Centre:   gtmath.Vector{X: 0.0, Y: 0.0, Z: -1.0},
+		Radius:   0.5,
+		Material: property.Lambertian{Albedo: gtmath.Vector{0.8, 0.3, 0.3}},
 	}
 	s2 := hitable.Sphere{
-		Centre: gtmath.Vector{X: 0.0, Y: -100.5, Z: -1.0},
-		Radius: 100,
+		Centre:   gtmath.Vector{X: 0.0, Y: -100.5, Z: -1.0},
+		Radius:   100,
+		Material: property.Lambertian{Albedo: gtmath.Vector{0.8, 0.8, 0.0}},
 	}
+	s3 := hitable.Sphere{
+		Centre:   gtmath.Vector{X: 1.0, Y: 0, Z: -1.0},
+		Radius:   0.5,
+		Material: property.Metal{Albedo: gtmath.Vector{0.8, 0.6, 0.2}},
+	}
+	s4 := hitable.Sphere{
+		Centre:   gtmath.Vector{X: -1.0, Y: 0, Z: -1.0},
+		Radius:   0.5,
+		Material: property.Metal{Albedo: gtmath.Vector{0.8, 0.8, 0.8}},
+	}
+
 	var hitList hitable.List
-	hitList.List = append(hitList.List, &s1, &s2)
+	hitList.List = append(hitList.List, &s1, &s2, &s3, &s4)
 
 	// create the camera
 	camera := view.Camera{
@@ -73,7 +86,7 @@ func main() {
 				v := (float64(j) + rand.Float64()) / float64(*hp)
 
 				r := camera.GetRay(u, v)
-				col = gtmath.AddVec(col, colour(&r, &hitList))
+				col = gtmath.AddVec(col, colour(&r, &hitList, 0))
 			}
 
 			col = col.Div(int(*ns))

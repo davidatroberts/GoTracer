@@ -126,7 +126,7 @@ func (v Vector) Normalize() Vector {
 }
 
 // UnitDirection returns unit direction of vector
-func (v *Vector) UnitDirection() Vector {
+func (v Vector) UnitDirection() Vector {
 	mag := v.Magnitude()
 	return v.Mult(1.0 / mag)
 }
@@ -198,4 +198,9 @@ func RandomVecInUnitSphere() Vector {
 	}
 
 	return p
+}
+
+// Reflect returns the reflection of v around n
+func Reflect(v, n Vector) Vector {
+	return SubVec(v, n.Mult(Dot(v, n)))
 }
